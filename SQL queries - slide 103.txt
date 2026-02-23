@@ -1,0 +1,5 @@
+1. SELECT * FROM Customers where country = 'Italy' or country = 'Brazil';
+2. SELECT * FROM Customers where customername like '%son%';
+3. SELECT * FROM orders where orderdate between '1996-10-01' and '1996-10-31' order by orderdate asc;
+4. SELECT COUNT(customerid), shipperid FROM orders GROUP BY shipperid ORDER BY COUNT(CustomerID) asc;
+5. SELECT * FROM Products where price > 25;
