@@ -1,0 +1,98 @@
+1. Products, suppliers and orderdetails
+select * from products join suppliers on products.supplierid=suppliers.suppierid join orderdetails on products.productid=orderdetails.productid;
+
+2. Customers, orders, shippers
+select * from customers join orders on customers.customerid=orders.customerid join shippers on orders.shipperid=shippers.shipperid;
+
+3. Orderdetails, orders, shippers
+select * from orders join orderdetails on orders.orderid=orderdetails.orderid join shippers on orders.shipperid=shippers.shipperid;
+
+4. Employees, orders, shippers
+select * from orders join employees on orders.employeeid=employees.employeeid join shippers on orders.shipperid=shippers.shipperid;
+
+5. Show customername and orderdate
+ select customername, orderdate from orders join customers on orders.customerid=customers.customerid;
+
+6. shoe ordered with productname
+ select orderid, productname from orderdetails join products on orderdetails.productid=products.productid;
+
+7. Show customername and product ordered
+select customername, productname from customers join orders on customers.customerid=orders.customerid join orderdetails on orders.orderid=orderdetails.orderid join products on products.productid=orderdetails.productid;
+
+8. Show employee who handled each order
+select firstname, lastname, orderid from employees join orders on orders.employeeid=employees.employeeid;
+ 
+9. show product name and its supplier name
+select productname, suppliername from orderdetails join orders on orders.orderid=orderdetails.orderid join suppliers on suppliers.supplierid=orderdetails.productid join products on products.productid=orderdetails.productid;
+
+10. show customer name and shipper used
+select customername, shippername from orderdetails join orders on orders.orderid=orderdetails.orderid join customers on customers.customerid=orders.customerid join shippers on shippers.shipperid=orderdetails.productid;
+
+11. Show employees and customers they served
+select firstname, lastname, customername from orders join employees on orders.employeeid=employees.employeeid join customers on customers.customerid=orders.employeeid;
+
+
+
+1. Create an ERD Diagram for THIS DATABASE (W3Schools WebSQL).
+   DONE
+
+2. Display : OrderId, OrderDate, CustomerName, City, Address, PostalCode, ShipperName, ProductName, Quantity.
+select orders.OrderId, orders.OrderDate, customers.CustomerName, customers.City, customers.Address, customers.PostalCode, shippers.ShipperName, products.ProductName, orderdetails.Quantity from orders join orderdetails on orders.orderid=orderdetails.orderid join customers on orders.customerid=customers.customerid join shippers on orders.shipperid=shippers.shipperid join products on orderdetails.productid=products.productid;
+
+3. Display all products ever been ordered and display the shipper name.
+select products.productname as Products, shippers.shippername as Shippers FROM orders join shippers on orders.shipperid=shippers.shipperid join orderdetails on orders.orderid=orderdetails.orderid join products on products.productid=orderdetails.productid;
+
+4. How many customers DO NOT have the words ‘son’ in their CustomerName.
+SELECT count(customerid) FROM Customers WHERE CustomerName not LIKE '%son&';
+
+5. 
+
+6. Display each customer_name and total_amount ever spent in the business, from highest amount.
+select customers.customername as Customer_Name, sum(orderdetails.quantity*products.price) as total_amount from orders join orderdetails on orders.orderid=orderdetails.orderid join products on products.productid=orderdetails.productid join customers on customers.customerid=orders.customerid group by customers.customerid, customers.customername;
+
+7. Find the total sales per day.
+select orders.orderdate as Order_Date, sum(products.price * orderdetails.quantity) as total_sales from orders join orderdetails on orders.orderid=orderdetails.orderid join products on orderdetails.productid=products.productid group by orders.orderdate;
+
+8. Find the total Sales for each Customer, the ones who have never ordered leave as 0.
+select customers.customername, sum(products.price * orderdetails.quantity) as total_sales from customers left join orders on customers.customerid=orders.customerid left join orderdetails on orders.orderid=orderdetails.orderid left join products on orderdetails.productid=products.productid group by customers.customerid, customers.customername;
+
+9. In the same database, create the table payments and determine the foreign key, any relevant columns and their respective data types. Insert at least 5 records.
+ DONE
+
+10.Find the total sales of each product.
+select products.productname, sum(products.price*orderdetails.quantity) from orders join orderdetails on orderdetails.orderid=orders.orderid join products on products.productid=orderdetails.productid group by products.productid,products.productname;
+
+11.Find the total sales made in the year 1997.
+select sum(products.price*orderdetails.quantity) as Total_Sales_1997 from orders join orderdetails on orderdetails.orderid=orders.orderid join products on products.productid=orderdetails.productid where orderdate like '1997-%';
+
+OR where orderdate between '1997-01-10' and '1997-12-31';
+
+12.Show total quantity ordered per product
+select products.productname as Product, sum(quantity) as Total_Quantity from orderdetails join products on products.productid=orderdetails.productid group by products.productid, products.productname;
+
+13.Show total orders per customer
+select customers.customername as Customer_Name, count(orderid) as Orders from orders join customers on customers.customerid=orders.customerid group by customers.customerid, customers.customername;
+
+14.Show total sales amount per product
+select products.productname as Product, sum(products.price*orderdetails.quantity) as Total_Sales_Amount from orderdetails join orders on orders.orderid=orderdetails.orderid join products on products.productid=orderdetails.productid group by products.productid, products.productname;
+
+15.Show category and total products in each category
+select categories.categoryname as Category, count(productid) as Total_prodcuts from Products join categories on categories.categoryid=products.categoryid group by categories.categoryname, categories.categoryid;
+
+16.Top 5 customers by total purchase amount
+Select top 5 sum(products.price*orderdetails.quantity) Total_Purchases, customers.customername as Customer_Name from customers join orders on customers.customerid=orders.customerid join orderdetails on orderdetails.orderid=orders.orderid join products on orderdetails.productid=products.productid group by customers.customerid,customers.customername order by sum(products.price*orderdetails.quantity) desc;
+
+17.Show employee and number of orders handled
+select employees.firstname as Employee_First_Name, employees.lastname as Employee_Last_Name, count(orderid) as Orders from orders join employees on employees.employeeid=orders.employeeid group by employees.employeeid, employees.firstname, employees.lastname;
+
+18.Total revenue per category
+select categories.categoryname as Category, sum(products.price*orderdetails.quantity) as Total_Revenue from Products join categories on categories.categoryid=products.categoryid join orderdetails on products.productid=orderdetails.productid join orders on orderdetails.orderid=orders.orderid group by categories.categoryname, categories.categoryid;
+
+19.Most sold product (by quantity)
+SELECT top 1 quantity, products.productname as Product FROM OrderDetails join products on products.productid=orderdetails.productid order by quantity desc;
+
+20.Employee who generated the highest sales
+SELECT top 1 sum(products.price*orderdetails.quantity) as Total_Sales, employees.firstname as Employee_First_Name, employees.lastname as Employee_Last_Name FROM OrderDetails join products on products.productid=orderdetails.productid join orders on orders.orderid=orderdetails.orderid join employees on employees.employeeid=orders.employeeid group by employees.employeeid, employees.firstname, employees.lastname order by sum(products.price*orderdetails.quantity) desc;
+
+
+
